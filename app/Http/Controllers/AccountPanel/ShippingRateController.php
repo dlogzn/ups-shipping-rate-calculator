@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\AccountPanel;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\AccountPanel\ShippingRateRequest;
 use App\Models\Country;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -28,265 +29,161 @@ class ShippingRateController extends Controller
         return response()->view('AccountPanel.shipping_rate', compact('title', 'countries'), Response::HTTP_OK);
     }
 
-    public function calculatePrice(Request $request): JsonResponse
+    public function calculatePrice(ShippingRateRequest $request): JsonResponse
     {
         try {
 
             $country = Country::where('id', $request->get('country_id'))->first();
-//            return response()->json(['message' => $country], Response::HTTP_OK);
-
-            $zipPopotamUrl = 'http://api.zippopotam.us';
+            $googleApiUrl = 'https://addressvalidation.googleapis.com/v1:validateAddress?key=AIzaSyBh7y76vE9SOafX22mdAmHOgvJlfPddmXM';
+            $googleApiHeaders  = [
+                'Content-Type: application/json'
+            ];
+            $shipFromPostFields = '{"address": {"regionCode": "' . $country->code . '","addressLines": ["' . $request->get('origin_zip_code') . '"]}}';
             $shipFromStateCh = curl_init();
-//            curl_setopt($shipFromStateCh, CURLOPT_URL, $zipPopotamUrl . '/' . $country->code . '/' . $request->get('origin_zip_code'));
-            curl_setopt($shipFromStateCh, CURLOPT_URL, 'http://api.zippopotam.us/' . $country->code . '/' . $request->get('origin_zip_code'));
-            curl_setopt($shipFromStateCh, CURLOPT_RETURNTRANSFER, 1);
-            curl_setopt($shipFromStateCh, CURLOPT_HEADER, 0);
-            curl_setopt($shipFromStateCh, CURLOPT_POST, 0);
-            curl_setopt($shipFromStateCh, CURLOPT_TIMEOUT, 3600);
-            $shipFromStateResponse = curl_exec($shipFromStateCh);
+            curl_setopt($shipFromStateCh, CURLOPT_URL,$googleApiUrl);
+            curl_setopt($shipFromStateCh, CURLOPT_POST, 1);
+            curl_setopt($shipFromStateCh, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($shipFromStateCh, CURLOPT_POSTFIELDS, $shipFromPostFields);
+            curl_setopt($shipFromStateCh, CURLOPT_HTTPHEADER, $googleApiHeaders);
+            $shipFromStateResponse = json_decode(curl_exec($shipFromStateCh), true);
             curl_close($shipFromStateCh);
-            $shipFromStateResponse = json_decode($shipFromStateResponse, true);
-//            return response()->json(['message' => $shipFromStateResponse], Response::HTTP_OK);
-            if (count($shipFromStateResponse) === 0) {
-                return response()->json(['message' => 'The Origin ZIP Code is Invalid.'], Response::HTTP_BAD_REQUEST);
-
+            if (array_key_exists('result', $shipFromStateResponse) && array_key_exists('administrativeArea', $shipFromStateResponse['result']['address']['postalAddress'])) {
+                $shipFromState = $shipFromStateResponse['result']['address']['postalAddress']['administrativeArea'];
+            } else if (array_key_exists('error', $shipFromStateResponse)) {
+                return response()->json(['message' => $shipFromStateResponse['error']['message']], Response::HTTP_BAD_REQUEST);
+            } else {
+                return response()->json(['message' => 'Invalid Ship From ZIP Code.'], Response::HTTP_BAD_REQUEST);
             }
 
+            $shipToPostFields = '{"address": {"regionCode": "' . $country->code . '","addressLines": ["' . $request->get('destination_zip_code') . '"]}}';
             $shipToStateCh = curl_init();
-            curl_setopt($shipToStateCh, CURLOPT_URL, $zipPopotamUrl . '/' . $country->code . '/' . $request->get('destination_zip_code'));
-            curl_setopt($shipToStateCh, CURLOPT_RETURNTRANSFER, 1);
-            curl_setopt($shipToStateCh, CURLOPT_HEADER, 0);
-            curl_setopt($shipToStateCh, CURLOPT_POST, 0);
-            curl_setopt($shipToStateCh, CURLOPT_TIMEOUT, 3600);
-            $shipToStateResponse = curl_exec($shipToStateCh);
+            curl_setopt($shipToStateCh, CURLOPT_URL,$googleApiUrl);
+            curl_setopt($shipToStateCh, CURLOPT_POST, 1);
+            curl_setopt($shipToStateCh, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($shipToStateCh, CURLOPT_POSTFIELDS, $shipToPostFields);
+            curl_setopt($shipToStateCh, CURLOPT_HTTPHEADER, $googleApiHeaders);
+            $shipToStateResponse = json_decode(curl_exec($shipToStateCh), true);
             curl_close($shipToStateCh);
-            $shipToStateResponse = json_decode($shipToStateResponse, true);
-
-            if (count($shipToStateResponse) === 0) {
-                return response()->json(['message' => 'The Destination ZIP Code is Invalid.'], Response::HTTP_BAD_REQUEST);
+            if (array_key_exists('result', $shipToStateResponse) && array_key_exists('administrativeArea', $shipToStateResponse['result']['address']['postalAddress'])) {
+                $shipToState = $shipToStateResponse['result']['address']['postalAddress']['administrativeArea'];
+            } else if (array_key_exists('error', $shipToStateResponse)) {
+                return response()->json(['message' => $shipToStateResponse['error']['message']], Response::HTTP_BAD_REQUEST);
+            } else {
+                return response()->json(['message' => 'Unknown error occurred.'], Response::HTTP_BAD_REQUEST);
             }
-
-
-
-            $rateApiData = '
-
-                <AccessRequest xml:lang="en-US">
-                    <AccessLicenseNumber>' . env('UPS_ACCESS_KEY') . '</AccessLicenseNumber>
-                    <UserId>' . env('UPS_USERNAME') . '</UserId>
-                    <Password>' . env('UPS_PASSWORD') . '</Password>
-                </AccessRequest>
-                <?xml version="1.0"?>
-                <RatingServiceSelectionRequest xml:lang="en-US">
-                    <Request>
-                        <TransactionReference>
-                            <CustomerContext>GoodGross</CustomerContext>
-                        </TransactionReference>
-                        <RequestAction>Rate</RequestAction>
-                        <RequestOption>Ratetimeintransit</RequestOption>
-                    </Request>
-                <Shipment>
-                    <DeliveryTimeInformation>
-                        <PackageBillType>03</PackageBillType>
-                        <Pickup>
-                            <Date>' . date_format(date_create($request->get('shipping_date')), 'Ymd') . '</Date>
-                            <Date>' . explode(':', $request->get('shipping_time'))[0] . explode(':', $request->get('shipping_time'))[1] . '</Date>
-                        </Pickup>
-                    </DeliveryTimeInformation>
-                    <RateInformation>
-                        <NegotiatedRatesIndicator/>
-                    </RateInformation>
-                    <Shipper>
-                        <Name>GoodGross</Name>
-                        <AttentionName>GoodGross</AttentionName>
-                        <PhoneNumber></PhoneNumber>
-                        <FaxNumber></FaxNumber>
-                        <ShipperNumber>A38H49</ShipperNumber>
-                        <Address>
-                            <AddressLine1></AddressLine1>
-                            <City>' . $request->get('origin_city') . '</City>
-                            <StateProvinceCode>' . $shipFromStateResponse['places'][0]['state abbreviation'] . '</StateProvinceCode>
-                            <PostalCode>' . $request->get('origin_zip_code') . '</PostalCode>
-                            <CountryCode>' . $country->code . '</CountryCode>
-                        </Address>
-                    </Shipper>
-                    <ShipTo>
-                        <CompanyName></CompanyName>
-                        <AttentionName></AttentionName>
-                        <PhoneNumber></PhoneNumber>
-                        <FaxNumber></FaxNumber>
-                        <Address>
-                            <AddressLine1></AddressLine1>
-                            <City>' . $request->get('destination_city') . '</City>
-                            <StateProvinceCode>' . $shipToStateResponse['places'][0]['state abbreviation'] . '</StateProvinceCode>
-                            <PostalCode>' . $request->get('destination_zip_code') . '</PostalCode>
-                            <CountryCode>' . $country->code . '</CountryCode>
-                        </Address>
-                    </ShipTo>
-                    <ShipFrom>
-                        <CompanyName></CompanyName>
-                        <AttentionName></AttentionName>
-                        <PhoneNumber></PhoneNumber>
-                        <FaxNumber></FaxNumber>
-                        <Address>
-                            <AddressLine1></AddressLine1>
-                            <City>' . $request->get('origin_city') . '</City>
-                            <StateProvinceCode>' . $shipFromStateResponse['places'][0]['state abbreviation'] . '</StateProvinceCode>
-                            <PostalCode>' . $request->get('origin_zip_code') . '</PostalCode>
-                            <CountryCode>' . $country->code . '</CountryCode>
-                        </Address>
-                    </ShipFrom>
-                    <Service>
-                        <Code>' . $request->get('service_code') . '</Code>
-                        <Description></Description>
-                    </Service>
-                    <Package>
-                        <PackagingType>
-                            <Code>02</Code>
-                            <Description>UPS Package</Description>
-                        </PackagingType>
-                        <PackageWeight>
-                            <UnitOfMeasurement>
-                                <Code>LBS</Code>
-                                </UnitOfMeasurement>
-                            <Weight>' . $request->get('package_weight') . '</Weight>
-                        </PackageWeight>
-                        <Dimensions>
-                            <UnitOfMeasurement>IN</UnitOfMeasurement>
-                            <Length>' . $request->get('package_length') . '</Length>
-                            <Width>' . $request->get('package_width') . '</Width>
-                            <Height>' . $request->get('package_height') . '</Height>
-                        </Dimensions>
-                    </Package>
-                </Shipment>
-                </RatingServiceSelectionRequest>
-                ';
-
-
-
-
-
-//            $rateApiUrl = 'https://wwwcie.ups.com/ups.app/xml/Rate';
-//            $rateCh = curl_init();
-//            curl_setopt($rateCh, CURLOPT_URL, $rateApiUrl);
-//            curl_setopt($rateCh, CURLOPT_RETURNTRANSFER, 1);
-//            curl_setopt($rateCh, CURLOPT_HEADER, 0);
-//            curl_setopt($rateCh, CURLOPT_POST, 1);
-//            curl_setopt($rateCh, CURLOPT_POSTFIELDS, $rateApiData);
-//            curl_setopt($rateCh, CURLOPT_TIMEOUT, 3600);
-//            $rateApiResponse = curl_exec($rateCh);
-//            curl_close($rateCh);
-//
-//            $rateApiResponse = json_encode(simplexml_load_string($rateApiResponse));
-//            $rateApiResponse = str_replace('&lt;', '<', $rateApiResponse);
-//            $rateApiResponse = str_replace('&gt;', '>', $rateApiResponse);
-//            $rateApiResponse = json_decode($rateApiResponse, true);
-//
-//            return response()->json(['payload' => $rateApiResponse], Response::HTTP_OK);
-
-
-
-
-
-            $rateApiUrl = 'https://wwwcie.ups.com/ship/v1/rating/RateTimeInTransit';
-            $rateApiData = [
-                'RateRequest' => [
-                    'CustomerClassification' => [
-                        'Code' => '00'
-                    ],
-                    'Shipment' => [
-                        'DeliveryTimeInformation' => [
-                            'PackageBillType' => '03',
-                            'Pickup' => [
-                                'Date' => date_format(date_create($request->get('shipping_date')), 'Ymd')
-                            ]
+            foreach ($request->get('package_length') as $key => $packageLength) {
+                $rateApiUrl = 'https://wwwcie.ups.com/ship/v1/rating/RateTimeInTransit';
+                $rateApiData = [
+                    'RateRequest' => [
+                        'CustomerClassification' => [
+                            'Code' => '00'
                         ],
-                        'Service' => [
-                            'Code' => $request->get('service_code')
-                        ],
-                        'ShipmentRatingOptions' => [
-                            'NegotiatedRatesIndicator' => '1',
-                        ],
-                        'Shipper' => [
-                            'Name' => 'GoodGross',
-                            'ShipperNumber' => 'A38H49',
-                            'Address' => [
-                                'AddressLine' => '',
-                                'City' => $request->get('origin_city'),
-                                'StateProvinceCode' => $shipFromStateResponse['places'][0]['state abbreviation'],
-                                'PostalCode' => $request->get('origin_zip_code'),
-                                'CountryCode' => $country->code,
-                            ]
-                        ],
-                        'ShipTo' => [
-                            'Name' => '',
-                            'Address' => [
-                                'AddressLine' => '',
-                                'City' => $request->get('destination_city'),
-                                'StateProvinceCode' => $shipToStateResponse['places'][0]['state abbreviation'],
-                                'PostalCode' => $request->get('destination_zip_code'),
-                                'CountryCode' => $country->code,
+                        'Shipment' => [
+                            'DeliveryTimeInformation' => [
+                                'PackageBillType' => '03',
+                                'Pickup' => [
+                                    'Date' => date_format(date_create($request->get('shipping_date')), 'Ymd')
+                                ]
                             ],
-
-                        ],
-                        'ShipFrom' => [
-                            'Name' => '',
-                            'Address' => [
-                                'AddressLine' => '',
-                                'City' => $request->get('origin_city'),
-                                'StateProvinceCode' => $shipFromStateResponse['places'][0]['state abbreviation'],
-                                'PostalCode' => $request->get('origin_zip_code'),
-                                'CountryCode' => $country->code,
-                            ]
-                        ],
-                        'ShipmentTotalWeight' => [
-                            'UnitOfMeasurement' => [
-                                'Code' => 'LBS',
-                                'Description' => 'Pounds'
+                            'Service' => [
+                                'Code' => $request->get('service_code')
                             ],
-                            'Weight' => $request->get('package_weight')
-                        ],
-                        'Package' => [
-                            'PackagingType' => [
-                                'Code' => '02',
-                                'Description' => 'Package'
+                            'ShipmentRatingOptions' => [
+                                'NegotiatedRatesIndicator' => '1',
                             ],
-                            'Dimensions' => [
-                                'UnitOfMeasurement' => [
-                                    'Code' => 'IN',
-                                    'Description' => 'Inch'
+                            'NumOfPieces' => $request->get('number_of_package')[$key],
+                            'Shipper' => [
+                                'Name' => 'GoodGross',
+                                'ShipperNumber' => '1RX454',
+                                'Address' => [
+                                    'AddressLine' => '',
+                                    'City' => $request->get('origin_city'),
+                                    'StateProvinceCode' => $shipFromState,
+                                    'PostalCode' => $request->get('origin_zip_code'),
+                                    'CountryCode' => $country->code,
+                                ]
+                            ],
+                            'ShipTo' => [
+                                'Name' => '',
+                                'Address' => [
+                                    'AddressLine' => '',
+                                    'City' => $request->get('destination_city'),
+                                    'StateProvinceCode' => $shipToState,
+                                    'PostalCode' => $request->get('destination_zip_code'),
+                                    'CountryCode' => $country->code,
                                 ],
-                                'Length' => $request->get('package_length'),
-                                'Width' => $request->get('package_width'),
-                                'Height' => $request->get('package_height')
+
                             ],
-                            'PackageWeight' => [
+                            'ShipFrom' => [
+                                'Name' => '',
+                                'Address' => [
+                                    'AddressLine' => '',
+                                    'City' => $request->get('origin_city'),
+                                    'StateProvinceCode' => $shipFromState,
+                                    'PostalCode' => $request->get('origin_zip_code'),
+                                    'CountryCode' => $country->code,
+                                ]
+                            ],
+                            'ShipmentTotalWeight' => [
                                 'UnitOfMeasurement' => [
                                     'Code' => 'LBS',
                                     'Description' => 'Pounds'
                                 ],
-                                'Weight' => $request->get('package_weight'),
+                                'Weight' => $request->get('package_weight')[$key]
+                            ],
+                            'Package' => [
+                                'PackagingType' => [
+                                    'Code' => '02',
+                                    'Description' => 'Package'
+                                ],
+                                'Dimensions' => [
+                                    'UnitOfMeasurement' => [
+                                        'Code' => 'IN',
+                                        'Description' => 'Inch'
+                                    ],
+                                    'Length' => $request->get('package_length')[$key],
+                                    'Width' => $request->get('package_width')[$key],
+                                    'Height' => $request->get('package_height')[$key]
+                                ],
+                                'PackageWeight' => [
+                                    'UnitOfMeasurement' => [
+                                        'Code' => 'LBS',
+                                        'Description' => 'Pounds'
+                                    ],
+                                    'Weight' => $request->get('package_weight')[$key],
+                                ]
                             ]
                         ]
                     ]
-                ]
-            ];
-            $rateApiPostData = json_encode($rateApiData);
-            $rateCh = curl_init($rateApiUrl);
-            curl_setopt($rateCh, CURLOPT_POST, 1);
-            curl_setopt($rateCh, CURLOPT_POSTFIELDS, $rateApiPostData);
-            curl_setopt($rateCh, CURLOPT_RETURNTRANSFER, 1);
-            curl_setopt($rateCh, CURLOPT_HTTPHEADER, [
-                'Content-Type: application/json',
-                'AccessLicenseNumber: ' . env('UPS_ACCESS_KEY'),
-                'transId: ' . time(),
-                'transactionSrc: GoodGross',
-                'Username: '. env('UPS_USERNAME'),
-                'Password: '. env('UPS_PASSWORD'),
-            ]);
-            $rateApiResponse = curl_exec($rateCh);
-            curl_close($rateCh);
-            $rateResponse = json_decode($rateApiResponse, true);
-            return response()->json(['payload' => $rateResponse], Response::HTTP_OK);
+                ];
+
+                if ($request->has('destination_type') && $request->get('destination_type') === 'Residential') {
+                    $rateApiData['RateRequest']['Shipment']['ShipTo']['Address']['ResidentialAddressIndicator'] = '';
+                }
+                $rateApiPostData = json_encode($rateApiData);
+                $rateCh = curl_init($rateApiUrl);
+                curl_setopt($rateCh, CURLOPT_POST, 1);
+                curl_setopt($rateCh, CURLOPT_POSTFIELDS, $rateApiPostData);
+                curl_setopt($rateCh, CURLOPT_RETURNTRANSFER, 1);
+                curl_setopt($rateCh, CURLOPT_HTTPHEADER, [
+                    'Content-Type: application/json',
+                    'AccessLicenseNumber: ' . env('UPS_ACCESS_KEY'),
+                    'transId: ' . time(),
+                    'transactionSrc: GoodGross',
+                    'Username: '. env('UPS_USERNAME'),
+                    'Password: '. env('UPS_PASSWORD'),
+                ]);
+                $rateApiResponse = curl_exec($rateCh);
+                curl_close($rateCh);
+                $rateResponse = json_decode($rateApiResponse, true);
+
+                if ( ! array_key_exists('RateResponse', $rateResponse)) {
+                    return response()->json(['payload' => $rateResponse], Response::HTTP_OK);
+                } else {
+                    $response[] = $rateResponse;
+                }
+            }
+            return response()->json(['payload' => $response], Response::HTTP_OK);
         } catch (\Exception $exception) {
             return response()->json(['message' => $exception->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
