@@ -91,7 +91,6 @@ class ShippingRateController extends Controller
                             'ShipmentRatingOptions' => [
                                 'NegotiatedRatesIndicator' => '1',
                             ],
-                            'NumOfPieces' => $request->get('number_of_package')[$key],
                             'Shipper' => [
                                 'Name' => 'GoodGross',
                                 'ShipperNumber' => '1RX454',
@@ -180,6 +179,12 @@ class ShippingRateController extends Controller
                 if ( ! array_key_exists('RateResponse', $rateResponse)) {
                     return response()->json(['payload' => $rateResponse], Response::HTTP_OK);
                 } else {
+                    $rateResponse['Package'] = [
+                        'Weight' => $request->get('package_weight')[$key],
+                        'Length' => $request->get('package_length')[$key],
+                        'Width' => $request->get('package_width')[$key],
+                        'Height' => $request->get('package_height')[$key]
+                    ];
                     $response[] = $rateResponse;
                 }
             }

@@ -11,7 +11,7 @@
                 </div>
 
                 <div class="row mt-3">
-                    <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-8 mb-4 mb-xl-0">
+                    <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-7 mb-4 mb-xl-0">
                         <div id="shipping_rate_form_message" class="text-danger text-center" style="height: 30px;"></div>
                         <form id="shipping_rate_form">
 
@@ -90,13 +90,26 @@
                                 </div>
                                 <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-6">
                                     <div class="mt-3 alert alert-info py-2">Package Information</div>
-                                    <div>
-                                        <div class="text_color_7 fw-bold">Number of Boxes</div>
-                                        <input type="text" class="form-control" name="number_of_boxes" id="number_of_boxes" value="1">
+                                    <div class="row">
+                                        <div class="col-12 col-sm-12 col-md-6 mb-3 mb-md-0">
+                                            <div>
+                                                <div class="text_color_7 fw-bold">Number of Boxes</div>
+                                                <input type="text" class="form-control" name="number_of_boxes" id="number_of_boxes" value="1">
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-sm-12 col-md-6">
+                                            <div class="text_color_7 fw-bold">Profit Margin</div>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" name="profit_margin" id="profit_margin">
+                                                <span class="input-group-text">%</span>
+                                            </div>
+                                        </div>
                                     </div>
 
-                                    <div id="boxes_container" class="mt-3">
+
+                                    <div id="boxes_container" class="mt-4">
                                         <div class="card border-0">
+                                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-circle bg-danger">1</span>
                                             <div class="card-body">
                                                 <div class="text_color_7 fw-bold">Package Dimension:</div>
                                                 <div class="row">
@@ -133,10 +146,6 @@
                                                             <span class="input-group-text">LBS</span>
                                                         </div>
                                                     </div>
-                                                    <div class="col-12 col-sm-12 col-md-6">
-                                                        <div class="text_color_7 fw-bold">Number of Package</div>
-                                                        <input type="text" class="form-control" name="number_of_package[]" id="number_of_package_0">
-                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -156,10 +165,11 @@
                             </div>
                         </form>
                     </div>
-                    <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-4">
+                    <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-5">
                         <div style="height: 30px;"></div>
                         <div id="rate_result">
                             <div class="card border-0">
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-circle bg-danger">1</span>
                                 <div class="card-body">
                                     <div class="text-info">General Shipment Information</div>
                                     <div class="d-flex flex-row">
@@ -179,17 +189,35 @@
                                         </div>
                                     </div>
 
-                                    <div class="text-info mt-4">Shipping Cost</div>
-                                    <div class="d-flex flex-row">
-                                        <div class="pe-3">
-                                            <div class="text_color_a">Negotiated Rate</div>
-                                            <div class="text_color_a">Commercial Rate</div>
+                                    <div class="row mt-4">
+                                        <div class="col">
+                                            <div class="text-info">Package Information</div>
+                                            <div class="d-flex flex-row">
+                                                <div class="pe-3">
+                                                    <div class="text_color_a">Weight</div>
+                                                    <div class="text_color_a">Dimension</div>
+                                                </div>
+                                                <div class="ps-3">
+                                                    <div class="text_color_7">---</div>
+                                                    <div class="text_color_7">---</div>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="ps-3">
-                                            <div class="text_color_7">---</div>
-                                            <div class="text_color_7">---</div>
+                                        <div class="col">
+                                            <div class="text-info">Shipping Cost</div>
+                                            <div class="d-flex flex-row">
+                                                <div class="pe-3">
+                                                    <div class="text_color_a">Negotiated Rate</div>
+                                                    <div class="text_color_a">Commercial Rate</div>
+                                                </div>
+                                                <div class="ps-3">
+                                                    <div class="text_color_7">---</div>
+                                                    <div class="text_color_7">---</div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
+
                                 </div>
                             </div>
                         </div>
@@ -224,7 +252,8 @@
                 $('#boxes_container').empty();
                 for (let i=0; i<numberOfBoxes; i++) {
                     $('#boxes_container').append(`
-                        <div class="card border-0 mb-3">
+                        <div class="card border-0 mb-4">
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-circle bg-danger">` + (i+1) + `</span>
                             <div class="card-body">
                                 <div class="text_color_7 fw-bold">Package Dimension:</div>
                                 <div class="row">
@@ -260,10 +289,6 @@
                                             <input type="text" class="form-control" name="package_weight[]" id="package_weight_` + i + `">
                                             <span class="input-group-text">LBS</span>
                                         </div>
-                                    </div>
-                                    <div class="col-12 col-sm-12 col-md-6">
-                                        <div class="text_color_7 fw-bold">Number of Package</div>
-                                        <input type="text" class="form-control" name="number_of_package[]" id="number_of_package_` + i + `">
                                     </div>
                                 </div>
                             </div>
@@ -333,24 +358,33 @@
                     } else {
                         $('#rate_result').empty();
                         let service = $('#service_code').val() === '03' ? 'UPS Ground' : 'UPS Standard';
+                        let profitMargin = $('#profit_margin').val() === '' ? 100 : parseInt($('#profit_margin').val());
+
                         $.each(result.payload, function (key, value) {
                             let businessDaysInTransit = value.RateResponse.RatedShipment.TimeInTransit.ServiceSummary.EstimatedArrival.BusinessDaysInTransit + ' Days(s)';
                             let deliveryDate = value.RateResponse.RatedShipment.TimeInTransit.ServiceSummary.EstimatedArrival.Arrival.Date;
                             let pickupDate = value.RateResponse.RatedShipment.TimeInTransit.ServiceSummary.EstimatedArrival.Pickup.Date;
                             let deliveryTime = value.RateResponse.RatedShipment.TimeInTransit.ServiceSummary.EstimatedArrival.Arrival.Time;
                             let pickupTime = value.RateResponse.RatedShipment.TimeInTransit.ServiceSummary.EstimatedArrival.Pickup.Time;
-                            let totalCharges = value.RateResponse.RatedShipment.TotalCharges.CurrencyCode + ' ' + value.RateResponse.RatedShipment.TotalCharges.MonetaryValue;
+                            let totalCharges = parseFloat(value.RateResponse.RatedShipment.TotalCharges.MonetaryValue);
+
+                            if (profitMargin < 100) {
+                                totalCharges = (totalCharges * profitMargin) / 100;
+                            }
 
                             let negotiatedCharges;
                             if (value.RateResponse.RatedShipment.hasOwnProperty('NegotiatedRateCharges')) {
-                                negotiatedCharges = value.RateResponse.RatedShipment.NegotiatedRateCharges.TotalCharge.CurrencyCode + ' ' + value.RateResponse.RatedShipment.NegotiatedRateCharges.TotalCharge.MonetaryValue;
+                                negotiatedCharges = parseFloat(value.RateResponse.RatedShipment.NegotiatedRateCharges.TotalCharge.MonetaryValue);
+                                if (profitMargin < 100) {
+                                    negotiatedCharges = (negotiatedCharges * profitMargin) / 100;
+                                }
+                                negotiatedCharges = value.RateResponse.RatedShipment.NegotiatedRateCharges.TotalCharge.CurrencyCode + ' ' + negotiatedCharges;
                             } else {
                                 negotiatedCharges = 'Negotiated Rates Unavailable';
                             }
-
-
                             $('#rate_result').append(`
-                                <div class="card border-0 mb-3">
+                                <div class="card border-0 mb-4">
+                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-circle bg-danger">` + (key+1) + `</span>
                                     <div class="card-body">
                                         <div class="text-info">General Shipment Information</div>
                                         <div class="d-flex flex-row">
@@ -359,7 +393,6 @@
                                                 <div class="text_color_a">Pickup Date and Time</div>
                                                 <div class="text_color_a">Business Days In Transit</div>
                                                 <div class="text_color_a">Est. Delivery Date and Time</div>
-
                                             </div>
                                             <div class="ps-3">
                                                 <div class="text_color_7">` + service + `</div>
@@ -369,16 +402,32 @@
 
                                             </div>
                                         </div>
-
-                                        <div class="text-info mt-4">Shipping Cost</div>
-                                        <div class="d-flex flex-row">
-                                            <div class="pe-3">
-                                                <div class="text_color_a">Negotiated Rate</div>
-                                                <div class="text_color_a">` + $('input[name="destination_type"]:checked').val() + ` Rate</div>
+                                        <div class="row mt-4">
+                                            <div class="col">
+                                                <div class="text-info">Pacakge Information</div>
+                                                <div class="d-flex flex-row">
+                                                    <div class="pe-3">
+                                                        <div class="text_color_a">Weight</div>
+                                                        <div class="text_color_a">Dimension</div>
+                                                    </div>
+                                                    <div class="ps-3">
+                                                        <div class="text_color_7">` + value.Package.Weight + ` LBS</div>
+                                                        <div class="text_color_7">` + value.Package.Length + ` x ` + value.Package.Width + ` x ` + value.Package.Height + ` inch</div>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div class="ps-3">
-                                                <div class="text_color_7">` + negotiatedCharges + `</div>
-                                                <div class="text_color_7">` + totalCharges + `</div>
+                                            <div class="col">
+                                                <div class="text-info">Shipping Cost</div>
+                                                <div class="d-flex flex-row">
+                                                    <div class="pe-3">
+                                                        <div class="text_color_a">Negotiated Rate</div>
+                                                        <div class="text_color_a">` + $('input[name="destination_type"]:checked').val() + ` Rate</div>
+                                                    </div>
+                                                    <div class="ps-3">
+                                                        <div class="text_color_7">` + negotiatedCharges + `</div>
+                                                        <div class="text_color_7">` + value.RateResponse.RatedShipment.TotalCharges.CurrencyCode + ` ` + totalCharges + `</div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>

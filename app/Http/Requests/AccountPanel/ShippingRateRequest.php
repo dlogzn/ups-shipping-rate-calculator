@@ -87,10 +87,6 @@ class ShippingRateRequest extends FormRequest
             'required',
             'numeric'
         ];
-        $rules['number_of_package.*'] = [
-            'nullable',
-            'numeric'
-        ];
         return $rules;
     }
 }
