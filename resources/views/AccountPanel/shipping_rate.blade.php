@@ -14,54 +14,48 @@
                     <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-7 mb-4 mb-xl-0">
                         <div id="shipping_rate_form_message" class="text-danger text-center" style="height: 30px;"></div>
                         <form id="shipping_rate_form">
-
-
-
-
                             <div class="row">
                                 <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-6 mb-3 mb-xl-0">
-                                    <div class="mt-3 alert alert-info py-2">Country and Service</div>
-                                    <select class="form-select mb-3" name="country_id" id="country_id">
-                                        <option value="">Select a Country</option>
-                                        @foreach($countries as $country)
-                                            <option value="{{ $country->id }}" data-country_code="{{ $country->code }}">{{ $country->country }}</option>
-                                        @endforeach
-                                    </select>
-                                    <select class="form-select" name="service_code" id="service_code">
-                                        <option value="">Select Service</option>
-                                    </select>
-                                    <hr>
                                     <div class="alert alert-info py-2">Where and When</div>
                                     <div class="text_color_7 fw-bold">Ship From:</div>
+                                    <div class="mb-3">
+                                        <label for="origin_country_id" class="form-label">Country</label>
+                                        <select class="form-select" name="origin_country_id" id="origin_country_id">
+                                            <option value="">Select a Country</option>
+                                            @foreach($countries as $country)
+                                                <option value="{{ $country->id }}" data-country_code="{{ $country->code }}">{{ $country->country }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
                                     <div class="row">
                                         <div class="col-12 col-sm-12 col-md-6 mb-3 mb-md-0">
-                                            <div>
-                                                <label for="origin_city" class="form-label">City</label>
-                                                <input type="text" class="form-control" name="origin_city" id="origin_city">
-                                            </div>
+                                            <label for="origin_city" class="form-label">City</label>
+                                            <input type="text" class="form-control" name="origin_city" id="origin_city">
                                         </div>
                                         <div class="col-12 col-sm-12 col-md-6">
-                                            <div>
-                                                <label for="origin_zip_code" class="form-label">ZIP Code</label>
-                                                <input type="text" class="form-control" name="origin_zip_code" id="origin_zip_code">
-                                            </div>
+                                            <label for="origin_zip_code" class="form-label">ZIP Code</label>
+                                            <input type="text" class="form-control" name="origin_zip_code" id="origin_zip_code">
                                         </div>
                                     </div>
-
                                     <hr>
                                     <div class="text_color_7 fw-bold">Ship To:</div>
+                                    <div class="mb-3">
+                                        <label for="destination_country_id" class="form-label">Country</label>
+                                        <select class="form-select" name="destination_country_id" id="destination_country_id">
+                                            <option value="">Select a Country</option>
+                                            @foreach($countries as $country)
+                                                <option value="{{ $country->id }}" data-country_code="{{ $country->code }}">{{ $country->country }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
                                     <div class="row">
                                         <div class="col-12 col-sm-12 col-md-6 mb-3 mb-md-0">
-                                            <div>
-                                                <label for="destination_city" class="form-label">City</label>
-                                                <input type="text" class="form-control" name="destination_city" id="destination_city">
-                                            </div>
+                                            <label for="destination_city" class="form-label">City</label>
+                                            <input type="text" class="form-control" name="destination_city" id="destination_city">
                                         </div>
                                         <div class="col-12 col-sm-12 col-md-6">
-                                            <div>
-                                                <label for="destination_zip_code" class="form-label">ZIP Code</label>
-                                                <input type="text" class="form-control" name="destination_zip_code" id="destination_zip_code">
-                                            </div>
+                                            <label for="destination_zip_code" class="form-label">ZIP Code</label>
+                                            <input type="text" class="form-control" name="destination_zip_code" id="destination_zip_code">
                                         </div>
                                     </div>
                                     <div class="row mt-3">
@@ -82,20 +76,16 @@
                                         </div>
                                         <div class="col-12 col-sm-12 col-md-6">
                                             <div class="text_color_7 fw-bold">Shipping Date</div>
-                                            <div>
-                                                <input type="text" class="form-control" name="shipping_date" id="shipping_date">
-                                            </div>
+                                            <input type="text" class="form-control" name="shipping_date" id="shipping_date" value="{{ date('Y-m-d') }}">
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-6">
-                                    <div class="mt-3 alert alert-info py-2">Package Information</div>
+                                    <div class="alert alert-info py-2">Package Information</div>
                                     <div class="row">
                                         <div class="col-12 col-sm-12 col-md-6 mb-3 mb-md-0">
-                                            <div>
-                                                <div class="text_color_7 fw-bold">Number of Boxes</div>
-                                                <input type="text" class="form-control" name="number_of_boxes" id="number_of_boxes" value="1">
-                                            </div>
+                                            <div class="text_color_7 fw-bold">Number of Boxes</div>
+                                            <input type="text" class="form-control" name="number_of_boxes" id="number_of_boxes" value="1">
                                         </div>
                                         <div class="col-12 col-sm-12 col-md-6">
                                             <div class="text_color_7 fw-bold">Profit Margin</div>
@@ -105,8 +95,6 @@
                                             </div>
                                         </div>
                                     </div>
-
-
                                     <div id="boxes_container" class="mt-4">
                                         <div class="card border-0">
                                             <span class="position-absolute top-0 start-100 translate-middle badge rounded-circle bg-danger">1</span>
@@ -114,28 +102,20 @@
                                                 <div class="text_color_7 fw-bold">Package Dimension:</div>
                                                 <div class="row">
                                                     <div class="col-3">
-                                                        <div>
-                                                            <label for="package_length_0" class="form-label">Length</label>
-                                                            <input type="text" class="form-control" name="package_length[]" id="package_length_0">
-                                                        </div>
+                                                        <label for="package_length_0" class="form-label">Length</label>
+                                                        <input type="text" class="form-control" name="package_length[]" id="package_length_0">
                                                     </div>
                                                     <div class="col-3">
-                                                        <div>
-                                                            <label for="package_width_0" class="form-label">Width</label>
-                                                            <input type="text" class="form-control" name="package_width[]" id="package_width_0">
-                                                        </div>
+                                                        <label for="package_width_0" class="form-label">Width</label>
+                                                        <input type="text" class="form-control" name="package_width[]" id="package_width_0">
                                                     </div>
                                                     <div class="col-3">
-                                                        <div>
-                                                            <label for="package_height_0" class="form-label">Height</label>
-                                                            <input type="text" class="form-control" name="package_height[]" id="package_height_0">
-                                                        </div>
+                                                        <label for="package_height_0" class="form-label">Height</label>
+                                                        <input type="text" class="form-control" name="package_height[]" id="package_height_0">
                                                     </div>
                                                     <div class="col-3 ps-0">
-                                                        <div>
-                                                            <label class="form-label invisible">Inches</label>
-                                                            <div class="form-control border-white bg-transparent">Inches</div>
-                                                        </div>
+                                                        <label class="form-label invisible">Inches</label>
+                                                        <div class="form-control border-white bg-transparent">Inches</div>
                                                     </div>
                                                 </div>
                                                 <div class="row mt-3">
@@ -224,6 +204,7 @@
 
                     </div>
                 </div>
+                <div style="height: 50px;"></div>
             </div>
         </div>
     </div>
@@ -258,28 +239,20 @@
                                 <div class="text_color_7 fw-bold">Package Dimension:</div>
                                 <div class="row">
                                     <div class="col-3">
-                                        <div>
-                                            <label for="package_length_` + i + `" class="form-label">Length</label>
-                                            <input type="text" class="form-control" name="package_length[]" id="package_length_` + i + `">
-                                        </div>
+                                        <label for="package_length_` + i + `" class="form-label">Length</label>
+                                        <input type="text" class="form-control" name="package_length[]" id="package_length_` + i + `">
                                     </div>
                                     <div class="col-3">
-                                        <div>
-                                            <label for="package_width_` + i + `" class="form-label">Width</label>
-                                            <input type="text" class="form-control" name="package_width[]" id="package_width_` + i + `">
-                                        </div>
+                                        <label for="package_width_` + i + `" class="form-label">Width</label>
+                                        <input type="text" class="form-control" name="package_width[]" id="package_width_` + i + `">
                                     </div>
                                     <div class="col-3">
-                                        <div>
-                                            <label for="package_height_` + i + `" class="form-label">Height</label>
-                                            <input type="text" class="form-control" name="package_height[]" id="package_height_` + i + `">
-                                        </div>
+                                        <label for="package_height_` + i + `" class="form-label">Height</label>
+                                        <input type="text" class="form-control" name="package_height[]" id="package_height_` + i + `">
                                     </div>
                                     <div class="col-3 ps-0">
-                                        <div>
-                                            <label class="form-label invisible">Inches</label>
-                                            <div class="form-control border-white bg-transparent">Inches</div>
-                                        </div>
+                                        <label class="form-label invisible">Inches</label>
+                                        <div class="form-control border-white bg-transparent">Inches</div>
                                     </div>
                                 </div>
                                 <div class="row mt-3">
@@ -298,32 +271,39 @@
             }
         });
 
-        $(document).on('change', '.destination_type', function () {
-            if ($(this).val() === 'Commercial') {
-                $('#regular_rate').parent().parent().children().eq(0).children().eq(1).text('Commercial Rate');
-            }
-            if ($(this).val() === 'Residential') {
-                $('#regular_rate').parent().parent().children().eq(0).children().eq(1).text('Residential Rate');
+
+
+        $(document).on('change', '#origin_country_id', function () {
+            $('#shipping_rate_form').find('#monetary_value').parent().parent().parent().remove();
+            let originCountryCode = $('#origin_country_id').find(':selected').data('country_code');
+            let destinationCountryCode = $('#destination_country_id').find(':selected').data('country_code');
+            if (originCountryCode !== undefined && destinationCountryCode !== undefined && originCountryCode !== destinationCountryCode) {
+                $('#shipping_date').parent().parent().after(`
+                    <div class="row mt-3">
+                        <div class="col-12 col-sm-12 col-md-6">
+                            <label for="monetary_value" class="form-label">Customs Value</label>
+                            <input type="text" class="form-control" name="monetary_value" id="monetary_value">
+                        </div>
+                    </div>
+                `);
             }
         });
-
-        $(document).on('change', '#country_id', function () {
-            if ($(this).find(':selected').val() === '') {
-                $('#service_code').empty().append(`
-                    <option value="">Select Service</option>
+        $(document).on('change', '#destination_country_id', function () {
+            $('#shipping_rate_form').find('#monetary_value').parent().parent().parent().remove();
+            let originCountryCode = $('#origin_country_id').find(':selected').data('country_code');
+            let destinationCountryCode = $('#destination_country_id').find(':selected').data('country_code');
+            if (originCountryCode !== undefined && destinationCountryCode !== undefined && originCountryCode !== destinationCountryCode) {
+                $('#shipping_date').parent().parent().after(`
+                    <div class="row mt-3">
+                        <div class="col-12 col-sm-12 col-md-6">
+                            <div class="text_color_7 fw-bold">Customs Value</div>
+                            <div class="input-group">
+                                <input type="text" class="form-control" name="monetary_value" id="monetary_value">
+                                <span class="input-group-text">` + originCountryCode + `D</span>
+                            </div>
+                        </div>
+                    </div>
                 `);
-            } else {
-                const countryCode = $(this).find(':selected').data('country_code');
-                if (countryCode === 'CA') {
-                    $('#service_code').empty().append(`
-                        <option value="11">UPS Standard</option>
-                    `);
-                }
-                if (countryCode === 'US') {
-                    $('#service_code').empty().append(`
-                        <option value="03">UPS Ground</option>
-                    `);
-                }
             }
         });
 
@@ -336,7 +316,6 @@
             $('#shipping_rate_form').find('.invalid-feedback').remove();
             $('#shipping_rate_form').find('.has-validation').removeClass('has-validation');
             $('#shipping_rate_form_message').empty();
-
             let formData = new FormData(this);
             formData.append('_token', '{{ csrf_token() }}');
 
@@ -357,28 +336,42 @@
                         $('#shipping_rate_form_message').append(result.payload.response.errors[0].message);
                     } else {
                         $('#rate_result').empty();
-                        let service = $('#service_code').val() === '03' ? 'UPS Ground' : 'UPS Standard';
+                        let service = result.payload.service_code === '03' ? 'UPS Ground' : 'UPS Standard';
                         let profitMargin = $('#profit_margin').val() === '' ? 100 : parseInt($('#profit_margin').val());
 
-                        $.each(result.payload, function (key, value) {
-                            let businessDaysInTransit = value.RateResponse.RatedShipment.TimeInTransit.ServiceSummary.EstimatedArrival.BusinessDaysInTransit + ' Days(s)';
-                            let deliveryDate = value.RateResponse.RatedShipment.TimeInTransit.ServiceSummary.EstimatedArrival.Arrival.Date;
-                            let pickupDate = value.RateResponse.RatedShipment.TimeInTransit.ServiceSummary.EstimatedArrival.Pickup.Date;
-                            let deliveryTime = value.RateResponse.RatedShipment.TimeInTransit.ServiceSummary.EstimatedArrival.Arrival.Time;
-                            let pickupTime = value.RateResponse.RatedShipment.TimeInTransit.ServiceSummary.EstimatedArrival.Pickup.Time;
+                        $.each(result.payload.rates, function (key, value) {
+                            let businessDaysInTransit;
+                            let deliveryDate;
+                            let pickupDate;
+                            let deliveryTime;
+                            let pickupTime;
+                            if (value.RateResponse.RatedShipment.hasOwnProperty('TimeInTransit')) {
+                                businessDaysInTransit = value.RateResponse.RatedShipment.TimeInTransit.ServiceSummary.EstimatedArrival.BusinessDaysInTransit + ' Days(s)';
+                                deliveryDate = value.RateResponse.RatedShipment.TimeInTransit.ServiceSummary.EstimatedArrival.Arrival.Date;
+                                pickupDate = value.RateResponse.RatedShipment.TimeInTransit.ServiceSummary.EstimatedArrival.Pickup.Date;
+                                deliveryTime = value.RateResponse.RatedShipment.TimeInTransit.ServiceSummary.EstimatedArrival.Arrival.Time;
+                                pickupTime = value.RateResponse.RatedShipment.TimeInTransit.ServiceSummary.EstimatedArrival.Pickup.Time;
+                            } else {
+                                businessDaysInTransit = '---';
+                                deliveryDate = '---';
+                                pickupDate = '---';
+                                deliveryTime = '---';
+                                pickupTime = '---';
+                            }
+
                             let totalCharges = parseFloat(value.RateResponse.RatedShipment.TotalCharges.MonetaryValue);
 
                             if (profitMargin < 100) {
-                                totalCharges = (totalCharges * profitMargin) / 100;
+                                totalCharges = totalCharges + ((totalCharges * profitMargin) / 100);
                             }
 
                             let negotiatedCharges;
                             if (value.RateResponse.RatedShipment.hasOwnProperty('NegotiatedRateCharges')) {
                                 negotiatedCharges = parseFloat(value.RateResponse.RatedShipment.NegotiatedRateCharges.TotalCharge.MonetaryValue);
                                 if (profitMargin < 100) {
-                                    negotiatedCharges = (negotiatedCharges * profitMargin) / 100;
+                                    negotiatedCharges = negotiatedCharges + ((negotiatedCharges * profitMargin) / 100);
                                 }
-                                negotiatedCharges = value.RateResponse.RatedShipment.NegotiatedRateCharges.TotalCharge.CurrencyCode + ' ' + negotiatedCharges;
+                                negotiatedCharges = value.RateResponse.RatedShipment.NegotiatedRateCharges.TotalCharge.CurrencyCode + ' ' + negotiatedCharges.toFixed(2);
                             } else {
                                 negotiatedCharges = 'Negotiated Rates Unavailable';
                             }
@@ -425,7 +418,7 @@
                                                     </div>
                                                     <div class="ps-3">
                                                         <div class="text_color_7">` + negotiatedCharges + `</div>
-                                                        <div class="text_color_7">` + value.RateResponse.RatedShipment.TotalCharges.CurrencyCode + ` ` + totalCharges + `</div>
+                                                        <div class="text_color_7">` + value.RateResponse.RatedShipment.TotalCharges.CurrencyCode + ` ` + totalCharges.toFixed(2) + `</div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -452,13 +445,15 @@
                     }
                     if (xhr.status === 422) {
                         $.each(xhr.responseJSON.errors, function (key, value) {
-                            if (key === 'country_id' || key === 'service_code' || key === 'origin_zip_code' || key === 'destination_zip_code' || key === 'origin_city' || key === 'destination_city' || key === 'shipping_date' || key === 'destination_type') {
-                                $('#' + key).after('<div class="invalid-feedback d-block">' + value[0] + '</div>');
+                            if (key === 'origin_country_id' || key === 'destination_country_id' || key === 'origin_zip_code' || key === 'destination_zip_code' || key === 'origin_city' || key === 'destination_city' || key === 'shipping_date' || key === 'destination_type' || key === 'monetary_value') {
+                                if (key === 'monetary_value') {
+                                    $('#' + key).parent().addClass('has-validation').append('<div class="invalid-feedback d-block">' + value[0] + '</div>');
+                                } else {
+                                    $('#' + key).after('<div class="invalid-feedback d-block">' + value[0] + '</div>');
+                                }
                             } else {
                                 let splitKey = key.split('.')[0];
                                 let originalKey = key.split('.')[0] + '_' + key.split('.')[1]
-                                console.log(splitKey)
-                                console.log(originalKey)
                                 if (splitKey === 'package_weight') {
                                     $('#' + originalKey).parent().addClass('has-validation').append('<div class="invalid-feedback d-block">' + value[0] + '</div>');
                                 } else {

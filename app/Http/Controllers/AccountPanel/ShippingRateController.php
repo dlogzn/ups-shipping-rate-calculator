@@ -32,13 +32,15 @@ class ShippingRateController extends Controller
     public function calculatePrice(ShippingRateRequest $request): JsonResponse
     {
         try {
+//            return response()->json(['payload' => ['rates' => 'abc']], Response::HTTP_OK);
 
-            $country = Country::where('id', $request->get('country_id'))->first();
+            $shipFromCountry = Country::where('id', $request->get('origin_country_id'))->first();
+            $shipToCountry = Country::where('id', $request->get('destination_country_id'))->first();
             $googleApiUrl = 'https://addressvalidation.googleapis.com/v1:validateAddress?key=AIzaSyBh7y76vE9SOafX22mdAmHOgvJlfPddmXM';
             $googleApiHeaders  = [
                 'Content-Type: application/json'
             ];
-            $shipFromPostFields = '{"address": {"regionCode": "' . $country->code . '","addressLines": ["' . $request->get('origin_zip_code') . '"]}}';
+            $shipFromPostFields = '{"address": {"regionCode": "' . $shipFromCountry->code . '","addressLines": ["' . $request->get('origin_zip_code') . '"]}}';
             $shipFromStateCh = curl_init();
             curl_setopt($shipFromStateCh, CURLOPT_URL,$googleApiUrl);
             curl_setopt($shipFromStateCh, CURLOPT_POST, 1);
@@ -55,7 +57,7 @@ class ShippingRateController extends Controller
                 return response()->json(['message' => 'Invalid Ship From ZIP Code.'], Response::HTTP_BAD_REQUEST);
             }
 
-            $shipToPostFields = '{"address": {"regionCode": "' . $country->code . '","addressLines": ["' . $request->get('destination_zip_code') . '"]}}';
+            $shipToPostFields = '{"address": {"regionCode": "' . $shipToCountry->code . '","addressLines": ["' . $request->get('destination_zip_code') . '"]}}';
             $shipToStateCh = curl_init();
             curl_setopt($shipToStateCh, CURLOPT_URL,$googleApiUrl);
             curl_setopt($shipToStateCh, CURLOPT_POST, 1);
@@ -71,12 +73,30 @@ class ShippingRateController extends Controller
             } else {
                 return response()->json(['message' => 'Unknown error occurred.'], Response::HTTP_BAD_REQUEST);
             }
+
+//            return response()->json(['payload' => ['origin_country' => $shipFromCountry, 'destination_country' => $shipToCountry, 'origin_state' => $shipFromState, 'destination_state' => $shipToState]], Response::HTTP_OK);
+
+            if ($shipFromCountry->code === 'US' && $shipToCountry->code === 'US') {
+                $serviceCode = '03';
+            }
+            if (($shipFromCountry->code === 'CA' && $shipToCountry->code === 'CA') || ($shipFromCountry->code === 'US' && $shipToCountry->code === 'CA') || ($shipFromCountry->code === 'CA' && $shipToCountry->code === 'US')) {
+                $serviceCode = '11';
+            }
+
+
+
+
+
+            $rateApiUrl = 'https://wwwcie.ups.com/ship/v1/rating/RateTimeInTransit';
+//            $rateApiUrl = 'https://onlinetools.ups.com/ship/{version}/rating/RateTimeInTransit';
             foreach ($request->get('package_length') as $key => $packageLength) {
-                $rateApiUrl = 'https://wwwcie.ups.com/ship/v1/rating/RateTimeInTransit';
                 $rateApiData = [
                     'RateRequest' => [
                         'CustomerClassification' => [
                             'Code' => '00'
+                        ],
+                        'PickupType' => [
+                            'Code' => '03'
                         ],
                         'Shipment' => [
                             'DeliveryTimeInformation' => [
@@ -86,20 +106,20 @@ class ShippingRateController extends Controller
                                 ]
                             ],
                             'Service' => [
-                                'Code' => $request->get('service_code')
+                                'Code' => $serviceCode
                             ],
                             'ShipmentRatingOptions' => [
                                 'NegotiatedRatesIndicator' => '1',
                             ],
                             'Shipper' => [
-                                'Name' => 'GoodGross',
-                                'ShipperNumber' => '1RX454',
+                                'Name' => env('UPS_SHIPPER_NAME'),
+                                'ShipperNumber' => env('UPS_SHIPPER_NUMBER'),
                                 'Address' => [
                                     'AddressLine' => '',
                                     'City' => $request->get('origin_city'),
                                     'StateProvinceCode' => $shipFromState,
                                     'PostalCode' => $request->get('origin_zip_code'),
-                                    'CountryCode' => $country->code,
+                                    'CountryCode' => $shipFromCountry->code,
                                 ]
                             ],
                             'ShipTo' => [
@@ -109,9 +129,8 @@ class ShippingRateController extends Controller
                                     'City' => $request->get('destination_city'),
                                     'StateProvinceCode' => $shipToState,
                                     'PostalCode' => $request->get('destination_zip_code'),
-                                    'CountryCode' => $country->code,
+                                    'CountryCode' => $shipToCountry->code,
                                 ],
-
                             ],
                             'ShipFrom' => [
                                 'Name' => '',
@@ -120,7 +139,7 @@ class ShippingRateController extends Controller
                                     'City' => $request->get('origin_city'),
                                     'StateProvinceCode' => $shipFromState,
                                     'PostalCode' => $request->get('origin_zip_code'),
-                                    'CountryCode' => $country->code,
+                                    'CountryCode' => $shipFromCountry->code,
                                 ]
                             ],
                             'ShipmentTotalWeight' => [
@@ -156,9 +175,23 @@ class ShippingRateController extends Controller
                     ]
                 ];
 
+                if ($shipFromCountry->code === 'US' && $shipToCountry->code === 'CA') {
+                    $rateApiData['RateRequest']['Shipment']['InvoiceLineTotal'] = [
+                        'CurrencyCode' => 'USD',
+                        'MonetaryValue' => $request->get('monetary_value')
+                    ];
+                }
+                if ($shipFromCountry->code === 'CA' && $shipToCountry->code === 'US') {
+                    $rateApiData['RateRequest']['Shipment']['InvoiceLineTotal'] = [
+                        'CurrencyCode' => 'CAD',
+                        'MonetaryValue' => $request->get('monetary_value')
+                    ];
+                }
+
                 if ($request->has('destination_type') && $request->get('destination_type') === 'Residential') {
                     $rateApiData['RateRequest']['Shipment']['ShipTo']['Address']['ResidentialAddressIndicator'] = '';
                 }
+//                return response()->json(['payload' => $rateApiData], Response::HTTP_OK);
                 $rateApiPostData = json_encode($rateApiData);
                 $rateCh = curl_init($rateApiUrl);
                 curl_setopt($rateCh, CURLOPT_POST, 1);
@@ -185,10 +218,10 @@ class ShippingRateController extends Controller
                         'Width' => $request->get('package_width')[$key],
                         'Height' => $request->get('package_height')[$key]
                     ];
-                    $response[] = $rateResponse;
+                    $rates[] = $rateResponse;
                 }
             }
-            return response()->json(['payload' => $response], Response::HTTP_OK);
+            return response()->json(['payload' => ['rates' => $rates, 'service_code' => $serviceCode, 'rate_api_data' => $rateApiData]], Response::HTTP_OK);
         } catch (\Exception $exception) {
             return response()->json(['message' => $exception->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }

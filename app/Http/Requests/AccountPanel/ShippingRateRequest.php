@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\AccountPanel;
 
+use App\Models\Country;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -12,7 +13,7 @@ class ShippingRateRequest extends FormRequest
      *
      * @return bool
      */
-    public function authorize()
+    public function authorize(): bool
     {
         return true;
     }
@@ -22,14 +23,10 @@ class ShippingRateRequest extends FormRequest
      *
      * @return array<string, mixed>
      */
-    public function rules()
+    public function rules(): array
     {
         $rules = [];
-        $rules['country_id'] = [
-            'required',
-            'numeric'
-        ];
-        $rules['service_code'] = [
+        $rules['origin_country_id'] = [
             'required',
             'numeric'
         ];
@@ -43,6 +40,10 @@ class ShippingRateRequest extends FormRequest
             'string',
             'min:3',
             'max:10'
+        ];
+        $rules['destination_country_id'] = [
+            'required',
+            'numeric'
         ];
         $rules['destination_city'] = [
             'nullable',
@@ -87,6 +88,16 @@ class ShippingRateRequest extends FormRequest
             'required',
             'numeric'
         ];
+        if ($this->origin_country_id && $this->destination_country_id) {
+            $shipFromCountry = Country::where('id', $this->origin_country_id)->first();
+            $shipToCountry = Country::where('id', $this->destination_country_id)->first();
+            if (($shipFromCountry->code === 'US' && $shipToCountry->code === 'CA') || ($shipFromCountry->code === 'CA' && $shipToCountry->code === 'US')) {
+                $rules['monetary_value'] = [
+                    'required',
+                    'numeric'
+                ];
+            }
+        }
         return $rules;
     }
 }

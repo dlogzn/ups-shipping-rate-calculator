@@ -77,6 +77,41 @@ LOCK TABLES `states` WRITE;
 INSERT INTO `states` VALUES (1,223,'Alabama','AL','Active','2022-12-07 14:27:44','2022-12-07 14:27:44'),(2,223,'Alaska','AK','Active','2022-12-07 14:27:44','2022-12-07 14:27:44'),(3,223,'American Samoa','AS','Active','2022-12-07 14:27:44','2022-12-07 14:27:44'),(4,223,'Arizona','AZ','Active','2022-12-07 14:27:44','2022-12-07 14:27:44'),(5,223,'Arkansas','AR','Active','2022-12-07 14:27:44','2022-12-07 14:27:44'),(6,223,'California','CA','Active','2022-12-07 14:27:44','2022-12-07 14:27:44'),(7,223,'Colorado','CO','Active','2022-12-07 14:27:44','2022-12-07 14:27:44'),(8,223,'Connecticut','CT','Active','2022-12-07 14:27:44','2022-12-07 14:27:44'),(9,223,'Delaware','DE','Active','2022-12-07 14:27:44','2022-12-07 14:27:44'),(10,223,'District Of Columbia','DC','Active','2022-12-07 14:27:44','2022-12-07 14:27:44'),(11,223,'Federated States Of Micronesia','FM','Active','2022-12-07 14:27:44','2022-12-07 14:27:44'),(12,223,'Florida','FL','Active','2022-12-07 14:27:44','2022-12-07 14:27:44'),(13,223,'Georgia','GA','Active','2022-12-07 14:27:44','2022-12-07 14:27:44'),(14,223,'Guam','GU','Active','2022-12-07 14:27:44','2022-12-07 14:27:44'),(15,223,'Hawaii','HI','Active','2022-12-07 14:27:44','2022-12-07 14:27:44'),(16,223,'Idaho','ID','Active','2022-12-07 14:27:44','2022-12-07 14:27:44'),(17,223,'Illinois','IL','Active','2022-12-07 14:27:44','2022-12-07 14:27:44'),(18,223,'Indiana','IN','Active','2022-12-07 14:27:44','2022-12-07 14:27:44'),(19,223,'Iowa','IA','Active','2022-12-07 14:27:44','2022-12-07 14:27:44'),(20,223,'Kansas','KS','Active','2022-12-07 14:27:44','2022-12-07 14:27:44'),(21,223,'Kentucky','KY','Active','2022-12-07 14:27:44','2022-12-07 14:27:44'),(22,223,'Louisiana','LA','Active','2022-12-07 14:27:44','2022-12-07 14:27:44'),(23,223,'Maine','ME','Active','2022-12-07 14:27:44','2022-12-07 14:27:44'),(24,223,'Marshall Islands','MH','Active','2022-12-07 14:27:44','2022-12-07 14:27:44'),(25,223,'Maryland','MD','Active','2022-12-07 14:27:44','2022-12-07 14:27:44'),(26,223,'Massachusetts','MA','Active','2022-12-07 14:27:44','2022-12-07 14:27:44'),(27,223,'Michigan','MI','Active','2022-12-07 14:27:44','2022-12-07 14:27:44'),(28,223,'Minnesota','MN','Active','2022-12-07 14:27:44','2022-12-07 14:27:44'),(29,223,'Mississippi','MS','Active','2022-12-07 14:27:44','2022-12-07 14:27:44'),(30,223,'Missouri','MO','Active','2022-12-07 14:27:44','2022-12-07 14:27:44'),(31,223,'Montana','MT','Active','2022-12-07 14:27:44','2022-12-07 14:27:44'),(32,223,'Nebraska','NE','Active','2022-12-07 14:27:44','2022-12-07 14:27:44'),(33,223,'Nevada','NV','Active','2022-12-07 14:27:44','2022-12-07 14:27:44'),(34,223,'New Hampshire','NH','Active','2022-12-07 14:27:44','2022-12-07 14:27:44'),(35,223,'New Jersey','NJ','Active','2022-12-07 14:27:44','2022-12-07 14:27:44'),(36,223,'New Mexico','NM','Active','2022-12-07 14:27:44','2022-12-07 14:27:44'),(37,223,'New York','NY','Active','2022-12-07 14:27:44','2022-12-07 14:27:44'),(38,223,'North Carolina','NC','Active','2022-12-07 14:27:44','2022-12-07 14:27:44'),(39,223,'North Dakota','ND','Active','2022-12-07 14:27:44','2022-12-07 14:27:44'),(40,223,'Northern Mariana Islands','MP','Active','2022-12-07 14:27:44','2022-12-07 14:27:44'),(41,223,'Ohio','OH','Active','2022-12-07 14:27:44','2022-12-07 14:27:44'),(42,223,'Oklahoma','OK','Active','2022-12-07 14:27:44','2022-12-07 14:27:44'),(43,223,'Oregon','OR','Active','2022-12-07 14:27:44','2022-12-07 14:27:44'),(44,223,'Palau','PW','Active','2022-12-07 14:27:44','2022-12-07 14:27:44'),(45,223,'Pennsylvania','PA','Active','2022-12-07 14:27:44','2022-12-07 14:27:44'),(46,223,'Puerto Rico','PR','Active','2022-12-07 14:27:44','2022-12-07 14:27:44'),(47,223,'Rhode Island','RI','Active','2022-12-07 14:27:44','2022-12-07 14:27:44'),(48,223,'South Carolina','SC','Active','2022-12-07 14:27:44','2022-12-07 14:27:44'),(49,223,'South Dakota','SD','Active','2022-12-07 14:27:44','2022-12-07 14:27:44'),(50,223,'Tennessee','TN','Active','2022-12-07 14:27:44','2022-12-07 14:27:44'),(51,223,'Texas','TX','Active','2022-12-07 14:27:44','2022-12-07 14:27:44'),(52,223,'Utah','UT','Active','2022-12-07 14:27:44','2022-12-07 14:27:44'),(53,223,'Vermont','VT','Active','2022-12-07 14:27:44','2022-12-07 14:27:44'),(54,223,'Virgin Islands','VI','Active','2022-12-07 14:27:44','2022-12-07 14:27:44'),(55,223,'Virginia','VA','Active','2022-12-07 14:27:44','2022-12-07 14:27:44'),(56,223,'Washington','WA','Active','2022-12-07 14:27:44','2022-12-07 14:27:44'),(57,223,'West Virginia','WV','Active','2022-12-07 14:27:44','2022-12-07 14:27:44'),(58,223,'Wisconsin','WI','Active','2022-12-07 14:27:44','2022-12-07 14:27:44'),(59,223,'Wyoming','WY','Active','2022-12-07 14:27:44','2022-12-07 14:27:44');
 /*!40000 ALTER TABLE `states` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `users`
+--
+
+DROP TABLE IF EXISTS `users`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `users` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `provider_id` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `provider_name` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `email` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `password` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `avatar` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `remember_token` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `verification_code` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `verification_token` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `for` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `status` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `users`
+--
+
+LOCK TABLES `users` WRITE;
+/*!40000 ALTER TABLE `users` DISABLE KEYS */;
+INSERT INTO `users` VALUES (1,NULL,NULL,'root@goodgross.com','$2y$10$91OSxMlUV/Mh8duqqMoYb.APq47xyruUh4Ff81Ud9zSkYi.MILTqO',NULL,NULL,NULL,NULL,'Control Panel','Active','2021-04-11 11:55:46','2021-04-11 11:55:46'),(2,NULL,NULL,'david.heath@gmail.com','$2y$10$yTjjkiVAjrtuEMBBmWJuqe6dQ9s4h.zUzkpR3YUDhr9CKBTVIlkZ.',NULL,NULL,NULL,NULL,'Account Panel','Active','2022-11-16 14:17:08','2022-11-16 14:33:36');
+/*!40000 ALTER TABLE `users` ENABLE KEYS */;
+UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -87,4 +122,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-01-16  4:00:36
+-- Dump completed on 2023-01-20  2:52:59
