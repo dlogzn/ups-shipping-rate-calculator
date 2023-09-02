@@ -12,16 +12,6 @@ use function PHPUnit\Framework\isEmpty;
 
 class ShippingRateController extends Controller
 {
-    protected array $upsServiceCodes   = [
-        '01'    => 'UPS Next Day Air',
-        '02'    => 'UPS 2nd Day Air',
-        '03'    => 'UPS Ground',
-        '12'    => 'UPS 3 Day Select',
-        '13'    => 'UPS Next Day Air Saver',
-        '14'    => 'UPS Next Day Air Early A.M.',
-        '59'    => 'UPS 2nd Day Air A.M.'
-    ];
-
     public function index(): Response
     {
         $title = 'UPS Shipping Rate';
@@ -32,11 +22,9 @@ class ShippingRateController extends Controller
     public function calculatePrice(ShippingRateRequest $request): JsonResponse
     {
         try {
-//            return response()->json(['payload' => ['rates' => 'abc']], Response::HTTP_OK);
-
             $shipFromCountry = Country::where('id', $request->get('origin_country_id'))->first();
             $shipToCountry = Country::where('id', $request->get('destination_country_id'))->first();
-            $googleApiUrl = 'https://addressvalidation.googleapis.com/v1:validateAddress?key=AIzaSyBh7y76vE9SOafX22mdAmHOgvJlfPddmXM';
+            $googleApiUrl = 'https://addressvalidation.googleapis.com/v1:validateAddress?key=' . env('GOOGLE_ADDRESS_VALIDATION_API_KEY');
             $googleApiHeaders  = [
                 'Content-Type: application/json'
             ];
@@ -73,22 +61,8 @@ class ShippingRateController extends Controller
             } else {
                 return response()->json(['message' => 'Unknown error occurred.'], Response::HTTP_BAD_REQUEST);
             }
-
-//            return response()->json(['payload' => ['origin_country' => $shipFromCountry, 'destination_country' => $shipToCountry, 'origin_state' => $shipFromState, 'destination_state' => $shipToState]], Response::HTTP_OK);
-
-            if ($shipFromCountry->code === 'US' && $shipToCountry->code === 'US') {
-                $serviceCode = '03';
-            }
-            if (($shipFromCountry->code === 'CA' && $shipToCountry->code === 'CA') || ($shipFromCountry->code === 'US' && $shipToCountry->code === 'CA') || ($shipFromCountry->code === 'CA' && $shipToCountry->code === 'US')) {
-                $serviceCode = '11';
-            }
-
-
-
-
-
+            $serviceCode = $shipFromCountry->code === 'US' && $shipToCountry->code === 'US' ? '03' : '11';
             $rateApiUrl = 'https://wwwcie.ups.com/ship/v1/rating/RateTimeInTransit';
-//            $rateApiUrl = 'https://onlinetools.ups.com/ship/{version}/rating/RateTimeInTransit';
             foreach ($request->get('package_length') as $key => $packageLength) {
                 $rateApiData = [
                     'RateRequest' => [
@@ -191,7 +165,6 @@ class ShippingRateController extends Controller
                 if ($request->has('destination_type') && $request->get('destination_type') === 'Residential') {
                     $rateApiData['RateRequest']['Shipment']['ShipTo']['Address']['ResidentialAddressIndicator'] = '';
                 }
-//                return response()->json(['payload' => $rateApiData], Response::HTTP_OK);
                 $rateApiPostData = json_encode($rateApiData);
                 $rateCh = curl_init($rateApiUrl);
                 curl_setopt($rateCh, CURLOPT_POST, 1);
